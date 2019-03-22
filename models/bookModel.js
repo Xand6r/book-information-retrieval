@@ -1,7 +1,17 @@
 let mongoose=require("mongoose")
 
 const bookSchema=new mongoose.Schema({
-    // attributes of a book
+    title:String,
+    author:String,
+    isbn:String,
+    publisher:String,
+    category:String,
+    publicationYear:Date,
+    uploadDate:{
+        type:Date,
+        default:Date.now
+    }
+
 })
 
-export default mongoose.model("book",bookSchema)
+module.exports=mongoose.model("book",bookSchema)

@@ -3,3 +3,26 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  form(action="/books/addBook", method="POST")
+    .input-field
+      label title: 
+      input(placeholder="enter the title of the book",name="title")
+    .input-field
+      label author: 
+      input(placeholder="enter the author of the book",name="author")
+    .input-field
+      label isbn: 
+      input(placeholder="enter your isbn of the book",name="isbn")
+    .input-field
+      label publisher: 
+      input(placeholder="publisher",name="publisher")
+    .input-field
+      label category: 
+      input(placeholder="category",name="category")
+    .input-field
+      label publication year: 
+      input(placeholder="publication-year",name="publication-year")
+    button(type="submit").
+      Submit
+  
+

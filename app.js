@@ -3,20 +3,20 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var mongoose=require("mongoose")
-
-var indexRouter = require('./routes/index');
+var mongoose=require("mongoose");
+var cors=require("cors")
+var bookRouter = require('./routes/books');
 var usersRouter = require('./routes/users');
 const port=process.env.port||8080
 var app = express();
 
-// connect to local database if environment is development
-if(app.get("env")=="development"){
+// connect to local database if the laptop belongs to xander
+if(process.env.USERDOMAIN=="XANDER"){
   mongoose.connect("mongodb://localhost/retrieval",{useNewUrlParser:true})
 }
+// otherwise connect to mlabs
 else{
-  // mongoose.connect("mongodb://localhost/retrieval")
-  // connect to mlabs
+  mongoose.connect("mongodb://xand6r:o4kasibe@ds061196.mlab.com:61196/book_retrieval",{useNewUrlParser:true})
 }
 
 
@@ -24,14 +24,14 @@ else{
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/books', bookRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
