@@ -7,11 +7,12 @@ var mongoose=require("mongoose");
 var cors=require("cors")
 var bookRouter = require('./routes/books');
 var usersRouter = require('./routes/users');
+var requestRouter=require("./routes/requests");
 const port=process.env.port||8080
 var app = express();
 
 // connect to local database if the laptop belongs to xander
-if(process.env.USERDOMAIN=="XANDER"){
+if(process.env.USERDOMAIN=="XANDERe"){
   mongoose.connect("mongodb://localhost/retrieval",{useNewUrlParser:true})
 }
 // otherwise connect to mlabs
@@ -31,8 +32,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// defining the routers  to use for each route
 app.use('/books', bookRouter);
 app.use('/users', usersRouter);
+app.use('/requests',requestRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

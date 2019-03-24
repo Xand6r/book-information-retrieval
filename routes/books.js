@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const bookModel=require("../models/bookModel");
-const categories=[];
 
 /* GET all the books in the database. */
 router.get('/', async function(req, res, next) {
@@ -24,7 +23,7 @@ router.post("/addBook",async function(req,res){
 
   let book=await newBook.save();
   console.log(book);
-  res.json({status:"succesfully saved"});
+  res.json({status:"succesfull"});
 
 })
 
@@ -42,7 +41,7 @@ router.get("/remove/:id",function(req,res){
       res.json({status:"unsuccesfull"})
     }
       console.log(book)
-      res.json({status:"succesful"})
+      res.json({status:"succesfull"})
   })
 })
 
@@ -62,8 +61,7 @@ router.get("/:category/:limit",async function(req,res){
 
 })
 
-
-
+ //  use virtuals for a comprehensive search
 
 
 module.exports = router;
