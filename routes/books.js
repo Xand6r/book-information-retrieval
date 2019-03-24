@@ -13,6 +13,7 @@ router.get('/', async function(req, res, next) {
 
 /*POST or add books to the database*/ 
 router.post("/addBook",async function(req,res){
+  console.log(req.body.category.toLowerCase())
   let newBook=new bookModel();
   newBook.title=req.body.title.toLowerCase();
   newBook.author=req.body.author.toLowerCase();
@@ -31,13 +32,26 @@ router.get("/addBook",async function(req,res){
   res.render("index.jade")
 })
 
+/* route  to delete  a book based on id */
+router.get("/remove/:id",function(req,res){
+  // find the book by id and delete it
+  let  id=req.params.id;
+  bookModel.findByIdAndDelete(id)
+  .exec((err,book)=>{
+    if(err){
+      res.json({status:"unsuccesfull"})
+    }
+      console.log(book)
+      res.json({status:"succesful"})
+  })
+})
 
 
 /* GET 5 random books from a specified category */
 router.get("/:category/:limit",async function(req,res){
   // limit is the number of books to fetch
   // category states the category of the book to be fetched
-  const limit=req.params.limit;
+  const limit=Number(req.params.limit);
   const category=req.params.category;
 
   // fetching the books from the database per-category
@@ -47,6 +61,8 @@ router.get("/:category/:limit",async function(req,res){
   res.json(books);
 
 })
+
+
 
 
 

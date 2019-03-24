@@ -17,11 +17,15 @@ block content
       label publisher: 
       input(placeholder="publisher",name="publisher")
     .input-field
-      label category: 
-      input(placeholder="category",name="category")
+      label(for="business") business
+      input(type="radio",name="category",value="business",id="business")
+      label(for="business") entertainment
+      input(type="radio",name="category",value="entertainment",id="entertainment")
+      label(for="business") education
+      input(type="radio",name="category",value="education",id="education")
     .input-field
       label publication year: 
-      input(placeholder="publication-year",name="publication-year")
+      input(placeholder="publication-year",name="publicationYear")
     button(type="submit").
       Submit
   
