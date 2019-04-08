@@ -3,15 +3,15 @@ let mongoose=require("mongoose")
 const bookSchema=new mongoose.Schema({
     title:String,
     author:String,
-    isbn:String,
-    publisher:String,
-    category:String,
+    edition:String,
     publicationYear:Date,
+    quantity:Number,
+    category:String,
     uploadDate:{
         type:Date,
         default:Date.now
     }
 
-})
+});
 
-module.exports=mongoose.model("book",bookSchema)
+module.exports=mongoose.model("book",bookSchema);

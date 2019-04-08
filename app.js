@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose=require("mongoose");
 var cors=require("cors")
+
+
 var bookRouter = require('./routes/books');
 var usersRouter = require('./routes/users');
 var requestRouter=require("./routes/requests");
@@ -12,7 +14,7 @@ const port=process.env.port||8080
 var app = express();
 
 // connect to local database if the laptop belongs to xander
-if(process.env.USERDOMAIN=="XANDERe"){
+if(process.env.USERDOMAIN=="XANDER"){
   mongoose.connect("mongodb://localhost/retrieval",{useNewUrlParser:true})
 }
 // otherwise connect to mlabs

@@ -8,28 +8,73 @@ router.get('/', async function(req, res, next) {
   res.json(books);
 });
 
+router.get("/categories",(req,res)=>{
+  categories=['Mathematical Sciences', 'Computer Science',
+  'Chemistry and Industrial Chemistry', 'Biochemistry',
+  'Biology and Genetics', 'Microbiology',
+  'Medical Laboratory Science', 'Engineering', 'Nursing', 'Geology',
+  'Physics and Geophysics', 'Chemical Technology',
+  'Agricultural Science', 'Anatomy', 'Physiology',
+  'Business Administration', 'Banking and finance', 'Economics',
+  'Political Science', 'International Relations', 'Accounting', 'Law',
+  'Mass Communication', 'Sociology', 'Criminology',
+  'Public Administration'
+]
+
+  res.json(categories)
+})
+
+// route to get 5 random books from each category...
+router.get("/random",async function(req,res){
+  categories=['Mathematical Sciences', 'Computer Science',
+              'Chemistry and Industrial Chemistry', 'Biochemistry',
+              'Biology and Genetics', 'Microbiology',
+              'Medical Laboratory Science', 'Engineering', 'Nursing', 'Geology',
+              'Physics and Geophysics', 'Chemical Technology',
+              'Agricultural Science', 'Anatomy', 'Physiology',
+              'Business Administration', 'Banking and finance', 'Economics',
+              'Political Science', 'International Relations', 'Accounting', 'Law',
+              'Mass Communication', 'Sociology', 'Criminology',
+              'Public Administration'
+            ]
+
+  books=[];
+  for(i=0;i<categories.length;i++){
+    book=await bookModel.find({category:categories[i].toLowerCase()});
+    console.log(book)
+    let cursor=Math.random()*(book.length-5);
+    books[i]=book.slice(cursor,cursor+5);
+  }
+  res.json(books)
+})
 
 
 /*POST or add books to the database*/ 
 router.post("/addBook",async function(req,res){
-  console.log(req.body.category.toLowerCase())
   let newBook=new bookModel();
+
   newBook.title=req.body.title.toLowerCase();
   newBook.author=req.body.author.toLowerCase();
-  newBook.isbn=req.body.isbn.toLowerCase();
-  newBook.publisher=req.body.publisher.toLowerCase();
+  newBook.edition=req.body.edition.toLowerCase();
+  newBook.quantity=req.body.quantity;
   newBook.category=req.body.category.toLowerCase();
   newBook.publicationYear=req.body.publicationYear.toLowerCase();
 
-  let book=await newBook.save();
-  console.log(book);
-  res.json({status:"succesfull"});
+  newBook.save((err,book)=>{
+    if(err){
+      console.log(err)
+      return
+    }
+    console.log(book)
+    res.json({status:"succesfull"});
 
+  });
 })
 
 router.get("/addBook",async function(req,res){
   res.render("index.jade")
 })
+
 
 /* route  to delete  a book based on id */
 router.get("/remove/:id",function(req,res){
@@ -46,22 +91,25 @@ router.get("/remove/:id",function(req,res){
 })
 
 
-/* GET 5 random books from a specified category */
-router.get("/:category/:limit",async function(req,res){
-  // limit is the number of books to fetch
-  // category states the category of the book to be fetched
-  const limit=Number(req.params.limit);
-  const category=req.params.category;
+/* GET books from a specified query */
+router.get("/:queryParam/:value",async function(req,res){
+  // query means the attribute we want to search the database for
+  // value means the specific attribute we want to find
+  const queryParam=req.params.queryParam;
+  const value=req.params.value.toLowerCase();
 
+  
+  let query=Object();
+  query[queryParam]=value;
   // fetching the books from the database per-category
-  let books=await bookModel.find({category}).limit(limit);
+  let books=await bookModel.find(query);
 
   // return the book to the request
   res.json(books);
 
 })
 
- //  use virtuals for a comprehensive search
+
 
 
 module.exports = router;

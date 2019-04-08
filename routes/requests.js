@@ -23,7 +23,7 @@ router.post("/",async function(req,res){
     newRequest=await newRequest.save();
     
     console.log(newRequest);
-    res.end({status:"succesfull"});
+    res.json({status:"succesfull"});
 
 })
 
