@@ -1,6 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const bookModel=require("../models/bookModel");
+const categories=['Mathematical Sciences', 'Computer Science',
+'Chemistry and Industrial Chemistry', 'Biochemistry',
+'Biology and Genetics', 'Microbiology',
+'Medical Laboratory Science', 'Engineering', 'Nursing', 'Geology',
+'Physics and Geophysics', 'Chemical Technology',
+'Agricultural Science', 'Anatomy', 'Physiology',
+'Business Administration', 'Banking and finance', 'Economics',
+'Political Science', 'International Relations', 'Accounting', 'Law',
+'Mass Communication', 'Sociology', 'Criminology',
+'Public Administration'
+]
 
 /* GET all the books in the database. */
 router.get('/', async function(req, res, next) {
@@ -8,43 +19,31 @@ router.get('/', async function(req, res, next) {
   res.json(books);
 });
 
-router.get("/categories",(req,res)=>{
-  categories=['Mathematical Sciences', 'Computer Science',
-  'Chemistry and Industrial Chemistry', 'Biochemistry',
-  'Biology and Genetics', 'Microbiology',
-  'Medical Laboratory Science', 'Engineering', 'Nursing', 'Geology',
-  'Physics and Geophysics', 'Chemical Technology',
-  'Agricultural Science', 'Anatomy', 'Physiology',
-  'Business Administration', 'Banking and finance', 'Economics',
-  'Political Science', 'International Relations', 'Accounting', 'Law',
-  'Mass Communication', 'Sociology', 'Criminology',
-  'Public Administration'
-]
+// get a specific book based on id
+router.get("/getOne/:id",(req,res)=>{
+  bookModel.findById(req.params.id,(err,book)=>{
+    if(err){
+      res.json({"status":"unsuccesfull"})
+    }
+    else{
+      res.json(book)
+    }
+  })
+})
 
+router.get("/categories",(req,res)=>{
   res.json(categories)
 })
 
 // route to get 5 random books from each category...
 router.get("/random",async function(req,res){
-  categories=['Mathematical Sciences', 'Computer Science',
-              'Chemistry and Industrial Chemistry', 'Biochemistry',
-              'Biology and Genetics', 'Microbiology',
-              'Medical Laboratory Science', 'Engineering', 'Nursing', 'Geology',
-              'Physics and Geophysics', 'Chemical Technology',
-              'Agricultural Science', 'Anatomy', 'Physiology',
-              'Business Administration', 'Banking and finance', 'Economics',
-              'Political Science', 'International Relations', 'Accounting', 'Law',
-              'Mass Communication', 'Sociology', 'Criminology',
-              'Public Administration'
-            ]
-
   books=[];
   for(i=0;i<categories.length;i++){
     book=await bookModel.find({category:categories[i].toLowerCase()});
     console.log(book)
     let cursor=Math.random()*(book.length-5);
     books[i]=book.slice(cursor,cursor+5);
-  }
+  }v
   res.json(books)
 })
 
@@ -90,6 +89,21 @@ router.get("/remove/:id",function(req,res){
   })
 })
 
+// route to update a book
+router.post("/update/:id",function(req,res){
+  bookModel.findById(req.params.id,async function(err,book){
+    book.title=req.body.title.toLowerCase();
+    book.author=req.body.author.toLowerCase();
+    book.edition=req.body.edition.toLowerCase();
+    book.quantity=req.body.quantity;
+    book.category=req.body.category.toLowerCase();
+    book.publicationYear=req.body.publicationYear.toLowerCase();
+    let updatedBook=await book.save();
+    console.log(updatedBook);
+    res.json(updatedBook);
+  })
+})
+
 
 /* GET books from a specified query */
 router.get("/:queryParam/:value",async function(req,res){
@@ -100,7 +114,7 @@ router.get("/:queryParam/:value",async function(req,res){
 
   
   let query=Object();
-  query[queryParam]=value;
+  query[queryParam]=new RegExp(value);
   // fetching the books from the database per-category
   let books=await bookModel.find(query);
 
