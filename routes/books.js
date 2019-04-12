@@ -38,12 +38,11 @@ router.get("/categories",(req,res)=>{
 // route to get 5 random books from each category...
 router.get("/random",async function(req,res){
   books=[];
-  for(i=0;i<categories.length;i++){
-    book=await bookModel.find({category:categories[i].toLowerCase()});
-    console.log(book)
-    let cursor=Math.random()*(book.length-5);
-    books[i]=book.slice(cursor,cursor+5);
-  }v
+  let category=categories[Math.random()*categories.length]
+  book=await bookModel.find({category:category.toLowerCase()});
+  console.log(book)
+  let cursor=Math.random()*(book.length-5);
+  books[i]=book.slice(cursor,cursor+5);
   res.json(books)
 })
 
