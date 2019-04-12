@@ -8,7 +8,9 @@ var userModel=require("../models/userModel");
 // defining the local strategy for authentication
 passport.use(new localStrategy(
   function(username,password,done){
-    userModel.findOne({username},function(err,user){
+    console.log(username)
+    userModel.findOne({username:username},function(err,user){
+      console.log(user)
       if(err){
         throw err
       }
@@ -37,7 +39,7 @@ passport.deserializeUser(function(id,done){
 
 
 /* GET users listing. */
-router.get('/getAll', async function(req, res, next) {
+router.get('/', async function(req, res, next) {
   let data=await userModel.find({})
   res.json(data);
 });
@@ -45,7 +47,7 @@ router.get('/getAll', async function(req, res, next) {
 // POST a user to the database
 router.post("/register",(req,res)=>{
   let newUser=new userModel();
-  newUser.name=req.body.name.toLowerCase();
+  newUser.username=req.body.username.toLowerCase();
   newUser.password=req.body.password.toLowerCase();
   newUser.status=req.body.status||"user"
   
@@ -60,8 +62,8 @@ router.post("/register",(req,res)=>{
   })
 })
 
-router.add("/login",passport.authenticate("local",{successRedirect:"/",failureRedirect:"/"}),(req,res)=>{
-  res.redirect("/")
+router.post("/login",passport.authenticate("local",{failureRedirect:"/notFound"}),(req,res)=>{
+  res.json(req.user);
 })
 
 router.get("/logout",function(req,res){
