@@ -49,7 +49,8 @@ router.post("/register",(req,res)=>{
   let newUser=new userModel();
   newUser.username=req.body.username.toLowerCase();
   newUser.password=req.body.password.toLowerCase();
-  newUser.status=req.body.status||"user"
+  newUser.status=req.body.status||"user";
+  newUser.bookRequests=[];
   
   newUser.save((err,book)=>{
     if(err){
@@ -62,8 +63,26 @@ router.post("/register",(req,res)=>{
   })
 })
 
-router.post("/login",passport.authenticate("local",{failureRedirect:"/notFound"}),(req,res)=>{
-  res.json(req.user);
+// router.post("/login",passport.authenticate("local",{failureRedirect:()=>{return }}),(req,res)=>{
+//   res.json(req.user);
+// })
+
+router.post("/login",function(req,res,next){
+  passport.authenticate("local",function(err,user,info){
+    if(err){
+      return res.json({"message":"there was an error logging you in"})
+    }
+    if(!user){
+      return(res.json(info))
+    }
+    req.logIn(user,err=>{
+      if(err){
+        return res.json({"message":"there was an error logging you in"})
+      }
+      return res.json(user)
+    })
+  })
+  (req,res,next)
 })
 
 router.get("/logout",function(req,res){

@@ -4,7 +4,10 @@ const userSchema=new  mongoose.Schema({
     username:String,
     password:String,
     status:String,
-    bookRequests:Array,
+    bookRequests:{
+        type:Array,
+        default:[]
+    }
     // {bookId,notification}
 });
 

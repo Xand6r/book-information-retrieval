@@ -56,7 +56,7 @@ router.post("/addBook",async function(req,res){
   newBook.edition=req.body.edition.toLowerCase();
   newBook.quantity=req.body.quantity;
   newBook.category=req.body.category.toLowerCase();
-  newBook.publicationYear=req.body.publicationYear.toLowerCase();
+  newBook.publicationYear=req.body.publicationYear;
 
   newBook.save((err,book)=>{
     if(err){
@@ -96,7 +96,7 @@ router.post("/update/:id",function(req,res){
     book.edition=req.body.edition.toLowerCase();
     book.quantity=req.body.quantity;
     book.category=req.body.category.toLowerCase();
-    book.publicationYear=req.body.publicationYear.toLowerCase();
+    book.publicationYear=req.body.publicationYear;
     let updatedBook=await book.save();
     console.log(updatedBook);
     res.json(updatedBook);
