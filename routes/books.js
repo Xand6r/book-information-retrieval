@@ -11,13 +11,19 @@ const categories=['Mathematical Sciences', 'Computer Science',
 'Political Science', 'International Relations', 'Accounting', 'Law',
 'Mass Communication', 'Sociology', 'Criminology',
 'Public Administration'
-]
+];
+const childBookModel=require("../models/childBookModel");
 
 /* GET all the books in the database. */
 router.get('/', async function(req, res, next) {
   books=await bookModel.find({});
   res.json(books);
 });
+
+router.get("/children",async function(req,res){
+  books=await childBookModel.find({})
+  res.json(books)
+})
 
 // get a specific book based on id
 router.get("/getOne/:id",(req,res)=>{
@@ -49,24 +55,29 @@ router.get("/random",async function(req,res){
 
 /*POST or add books to the database*/ 
 router.post("/addBook",async function(req,res){
-  let newBook=new bookModel();
+  let newParentBook=new bookModel();
 
-  newBook.title=req.body.title.toLowerCase();
-  newBook.author=req.body.author.toLowerCase();
-  newBook.edition=req.body.edition.toLowerCase();
-  newBook.quantity=req.body.quantity;
-  newBook.category=req.body.category.toLowerCase();
-  newBook.publicationYear=req.body.publicationYear;
+  newParentBook.title=req.body.title.toLowerCase();
+  newParentBook.author=req.body.author.toLowerCase();
+  newParentBook.edition=req.body.edition.toLowerCase();
+  newParentBook.quantity=req.body.quantity;
+  newParentBook.category=req.body.category.toLowerCase();
+  newParentBook.publicationYear=req.body.publicationYear;
 
-  newBook.save((err,book)=>{
-    if(err){
-      console.log(err)
-      return
+  newParent=await newParentBook.save()
+    // if the parent was sucessfully saved save "quantity" number of children
+  for(let i=0;i<req.body.quantity;i++){
+    let newChildBook=new childBookModel();
+    newChildBook.title=req.body.title.toLowerCase();
+    newChildBook.author=req.body.author.toLowerCase();
+    newChildBook.edition=req.body.edition.toLowerCase();
+    newChildBook.category=req.body.category.toLowerCase();
+    newChildBook.publicationYear=req.body.publicationYear;
+    newChildBook.parent=newParent.id;
+    newChild=await newChildBook.save();
     }
-    console.log(book)
-    res.json({status:"succesfull"});
+  res.json({status:"succesfull"});
 
-  });
 })
 
 router.get("/addBook",async function(req,res){
@@ -75,21 +86,26 @@ router.get("/addBook",async function(req,res){
 
 
 /* route  to delete  a book based on id */
-router.get("/remove/:id",function(req,res){
+router.get("/remove/:id",async function(req,res){
   // find the book by id and delete it
   let  id=req.params.id;
-  bookModel.findByIdAndDelete(id)
+  childBookModel.findByIdAndDelete(id)
   .exec((err,book)=>{
     if(err){
       res.json({status:"unsuccesfull"})
     }
-      console.log(book)
+    else{
+      parentBook=await bookModel.findById(book.parent)
+      let quantity=parentBook.quantity;
+      console.log(quantity)
       res.json({status:"succesfull"})
+    }
+
   })
 })
 
 // route to update a book
-router.post("/update/:id",function(req,res){
+router.post("/update/:id",async function(req,res){
   bookModel.findById(req.params.id,async function(err,book){
     book.title=req.body.title.toLowerCase();
     book.author=req.body.author.toLowerCase();

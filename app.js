@@ -16,13 +16,13 @@ const port=process.env.port||8081
 var app = express();
 
 // connect to local database if the laptop belongs to xander
-// if(process.env.USERDOMAIN=="XANDER"){
+if(process.env.USERDOMAIN=="XANDER"){
   mongoose.connect("mongodb://localhost/retrieval",{useNewUrlParser:true})
 // }
 // otherwise connect to mlabs
-// else{
-  // mongoose.connect("mongodb://xand6r:o4kasibe@ds061196.mlab.com:61196/book_retrieval",{useNewUrlParser:true})
-// }
+else{
+  mongoose.connect("mongodb://xand6r:o4kasibe@ds061196.mlab.com:61196/book_retrieval",{useNewUrlParser:true})
+}
 
 
 // view engine setup
