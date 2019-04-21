@@ -12,7 +12,7 @@ var passport=require("passport");
 var bookRouter = require('./routes/books');
 var usersRouter = require('./routes/users');
 var requestRouter=require("./routes/requests");
-const port=process.env.port||8081
+const port=process.env.PORT||8081
 var app = express();
 
 // connect to local database if the laptop belongs to xander
