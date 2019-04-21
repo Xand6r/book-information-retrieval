@@ -90,7 +90,7 @@ router.get("/remove/:id",async function(req,res){
   // find the book by id and delete it
   let  id=req.params.id;
   childBookModel.findByIdAndDelete(id)
-  .exec((err,book)=>{
+  .exec(async (err,book)=>{
     if(err){
       res.json({status:"unsuccesfull"})
     }
