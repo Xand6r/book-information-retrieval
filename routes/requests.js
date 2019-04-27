@@ -1,6 +1,7 @@
 let requestModel=require("../models/requestModel");
 let userModel=require("../models/userModel");
 let bookModel=require("../models/bookModel");
+let childBookModel=require("../models/childBookModel");
 let express=require("express");
 let router=express.Router();
 
@@ -14,6 +15,7 @@ router.get("/",async function(req,res){
 
 
 // route to add a request
+// when making a request we use the books own id
 router.post("/addRequest",async function(req,res){
     if(!req.body.userId||!req.body.bookId||!req.body.requesterName){
         res.json({status:"incomplete parameters"});
@@ -42,19 +44,33 @@ router.post("/addRequest",async function(req,res){
 
 });
 
+
+// when approving the id sent is going to be the child's own
 router.get("/approveRequest/:reqId",function(req,res){
     requestModel.findById(req.params.reqId,function(err,request){
         if(err){
             res.json({"status":"there was an error"});
             return;
         }
-        bookModel.findById(request.bookId,async (err,book)=>{
+        childBookModel.findById(request.bookId,async (err,childBook)=>{
+            let book=await bookModel.findById(childBook.parent);
             if(book.quantity==1){
                 res.json({"message":"cannot borrow when book is one"})
+                return
             }
+
+            // change the status of the requested variable to 'true'
+            childBook.requested=true;
+
+            // reduce the quantity of the parent and save
             book.quantity=String(Number(book.quantity)-1);
-            await book.save();    
+
+            // change the status of the requests to approved
             request.status="approved";
+            
+            // save all the updated versions of the models
+            await childBook.save();
+            await book.save();    
             await request.save();
             res.json({"status":"sucessful"});
         })

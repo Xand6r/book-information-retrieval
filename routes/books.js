@@ -20,9 +20,10 @@ router.get('/', async function(req, res, next) {
   res.json(books);
 });
 
-router.get("/children",async function(req,res){
-  books=await childBookModel.find({})
-  res.json(books)
+// new route to get all the children of a book
+router.get("/children/:id",async function(req,res){
+  books=await childBookModel.find({parent:req.params.id,requested:false});
+  res.json(books);
 })
 
 // get a specific book based on id
@@ -95,10 +96,15 @@ router.get("/remove/:id",async function(req,res){
       res.json({status:"unsuccesfull"})
     }
     else{
-      parentBook=await bookModel.findById(book.parent)
-      let quantity=parentBook.quantity;
-      console.log(quantity)
-      res.json({status:"succesfull"})
+      parentBook=await bookModel.findById(book.parent);
+      if(parentBook.quantity==1){
+        await bookModel.findOneAndDelete(book.parent);
+      }
+      else{
+        parentBook.quantity=parentBook.quantity-1;
+        await parentBook.save();
+      }
+      res.json({status:"succesfull"});
     }
 
   })
@@ -110,10 +116,13 @@ router.post("/update/:id",async function(req,res){
     book.title=req.body.title.toLowerCase();
     book.author=req.body.author.toLowerCase();
     book.edition=req.body.edition.toLowerCase();
-    book.quantity=req.body.quantity;
     book.category=req.body.category.toLowerCase();
     book.publicationYear=req.body.publicationYear;
     let updatedBook=await book.save();
+
+    // childBookModel.updateMany({parent:updatedBook.id})
+    // update the book
+
     console.log(updatedBook);
     res.json(updatedBook);
   })

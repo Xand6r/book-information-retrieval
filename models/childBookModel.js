@@ -7,6 +7,10 @@ const childBookSchema=new mongoose.Schema({
     publicationYear:Date,
     category:String,
     parent:{type:mongoose.Schema.Types.ObjectId,ref:"book"},
+    requested:{
+        type:Boolean,
+        default:false
+    },
     uploadDate:{
         type:Date,
         default:Date.now
