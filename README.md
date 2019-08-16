@@ -11,7 +11,7 @@ This is the backend code for a book information retrieval information system. th
 |app.js| this is the main entry point for the application|
 
 ### running and setting up the application
-(1) firstly run `npm install` in the root folder of the project
-(2) then run `node app.js` : it then brings out the port o which the server as been started 
-(3) open your browser and go to the adress http://localhost:'port' 
+(1) firstly run `npm install` in the root folder of the project<hr/>
+(2) then run `node app.js` : it then brings out the port o which the server as been started <hr/>
+(3) open your browser and go to the adress http://localhost:'port' <hr/>
 note: 'port' should be replaced by the port which the server is set to run on
